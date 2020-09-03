@@ -23,6 +23,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 #     - name: Test
 #       run: dotnet test --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish
     - name: List out directory contents
       run: |
         echo "Listing the contents of the GitHub workspace directory"
