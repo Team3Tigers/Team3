@@ -75,11 +75,16 @@ jobs:
           with:
           # Artifact name
             name: drop
+        - name: Azure Login
+          uses: Azure/login@v1
+          with:
+            # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+            creds: ${{secrets.AZURECREDENTIALSJONO}}
+            # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
         - name: Azure WebApp
           uses: Azure/webapps-deploy@v2
           with:
             app-name: linApp
-            publish-profile: ${{secrets.LIN_SECRET}}
             package: . # optional, default is .
 
   release2:  
@@ -91,11 +96,16 @@ jobs:
           with:
           # Artifact name
             name: drop
+        - name: Azure Login
+          uses: Azure/login@v1
+          with:
+            # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+            creds: ${{secrets.AZURECREDENTIALSJONO}}
+            # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
         - name: Azure WebApp
           uses: Azure/webapps-deploy@v2
           with:
             app-name: EliaWebApp
-            publish-profile: ${{secrets.ELIA_PUBLISHSECRET}}
             package: . # optional, default is .
   release3:  
       runs-on: windows-latest
@@ -115,7 +125,6 @@ jobs:
             # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
             creds: ${{secrets.AZURECREDENTIALSJONO}}
             # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
-            enable-AzPSSession: true
         - name: Azure WebApp
           uses: Azure/webapps-deploy@v2
           with:
