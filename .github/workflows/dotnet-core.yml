@@ -174,7 +174,7 @@ jobs:
                 },
                 {
                   "name": "GlobalPassword",
-                  "value": "${{secrets.GLOBALPASSWORDJONO}}",
+                  "value": "${{env.GlobalPassword}}",
                   "slotSetting": false
                 },
                 {
