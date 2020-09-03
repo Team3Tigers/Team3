@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test ${{ github.workspace }}/AnimalAdoption.Web.Portal.UnitTests --no-restore --verbosity normal
     - name: Publish
       run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build --configuration Release
     - name: List out directory contents
