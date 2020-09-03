@@ -24,7 +24,7 @@ jobs:
 #     - name: Test
 #       run: dotnet test --no-restore --verbosity normal
     - name: Publish
-      run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build
+      run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build --configuration release
     - name: List out directory contents
       run: |
         echo "Listing the contents of the GitHub workspace directory"
