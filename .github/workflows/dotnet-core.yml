@@ -1,0 +1,115 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+   
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test ${{ github.workspace }}/AnimalAdoption.Web.Portal.UnitTests --no-restore --verbosity normal
+
+    - name: Setup Nuget.exe
+      # You may pin to the exact commit or the version.
+      # uses: warrenbuckley/Setup-Nuget@09c4593220c119ed8d6a811954d72bddd986e29a
+      uses: warrenbuckley/Setup-Nuget@v1
+
+    - name: Package up logic project as a NuGet package
+      run: dotnet pack ${{ github.workspace }}/AnimalAdoption.Common.Logic --configuration Release --no-build
+
+    - name: Add source to Nuget
+      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/Team3Tigers/index.json" -UserName edwahn -Password ${{ secrets.PAT_GPR_READWRITEDELETE }}
+
+    - name: Nuget SetAPIKey
+      run: nuget setApiKey ${{ secrets.PAT_GPR_READWRITEDELETE }} -Source "GitHub"
+
+    - name: Nuget Push
+      run: nuget push ${{ github.workspace }}\AnimalAdoption.Common.Logic\bin\Release\*.nupkg -Source "GitHub" -SkipDuplicate
+
+    - name: Publish
+      run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build --configuration Release
+
+    - name: List out directory contents
+      run: |
+        echo "Listing the contents of the GitHub workspace directory"
+        ls ${{ github.workspace }}
+
+        echo "Recursively listing all contents of the current directory"
+        ls -R
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        # Artifact name
+        name: drop
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ github.workspace }}/webportal
+        # The desired behavior if no files are found using the provided path.
+        if-no-files-found: error
+  
+  release1:  
+      runs-on: windows-latest
+      needs: build
+      steps:
+        - name: Download a Build Artifact
+          uses: actions/download-artifact@v2.0.5
+          with:
+          # Artifact name
+            name: drop
+        - name: Azure WebApp
+          uses: Azure/webapps-deploy@v2
+          with:
+            app-name: linApp
+            publish-profile: ${{secrets.LIN_SECRET}}
+            package: . # optional, default is .
+
+  release2:  
+      runs-on: windows-latest
+      needs: build
+      steps:
+        - name: Download a Build Artifact
+          uses: actions/download-artifact@v2.0.5
+          with:
+          # Artifact name
+            name: drop
+        - name: Azure WebApp
+          uses: Azure/webapps-deploy@v2
+          with:
+            app-name: EliaWebApp
+            publish-profile: ${{secrets.ELIA_PUBLISHSECRET}}
+            package: . # optional, default is .
+  release3:  
+      runs-on: windows-latest
+      needs: build
+      steps:
+        - name: Download a Build Artifact
+          uses: actions/download-artifact@v2.0.5
+          with:
+          # Artifact name
+            name: drop
+        - name: Azure WebApp
+          uses: Azure/webapps-deploy@v2
+          with:
+            app-name: JonoApp
+            publish-profile: ${{secrets.JONOSECRETAPP}}
+            package: . # optional, default is .
+           
