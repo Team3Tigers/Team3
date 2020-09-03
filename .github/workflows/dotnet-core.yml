@@ -42,7 +42,7 @@ jobs:
       run: nuget setApiKey ${{ secrets.PAT_GPR_READWRITEDELETE }} -Source "GitHub"
 
     - name: Nuget Push
-      run: nuget push ${{ github.workspace }}\AnimalAdoption.Common.Logic\bin\Release\*.nupkg -Source "GitHub"
+      run: nuget push ${{ github.workspace }}\AnimalAdoption.Common.Logic\bin\Release\*.nupkg -Source "GitHub" -SkipDuplicate
 
     - name: Publish
       run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build --configuration Release
