@@ -36,7 +36,7 @@ jobs:
         # Artifact name
         name: drop
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/AnimalAdoption.Web.Portal
         # The desired behavior if no files are found using the provided path.
 #     Available Options:
 #       warn: Output a warning but do not fail the action
