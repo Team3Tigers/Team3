@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  GlobalPassowrdSecret: GlobalPassword
+  DevKeyVaultName: Team3KeyVault 
 jobs:
    
   build:
@@ -131,6 +134,14 @@ jobs:
             app-name: JonoApp
             package: . # optional, default is .
             
+        - name: Azure key vault - Get Secrets
+          uses: Azure/get-keyvault-secrets@v1
+          with:
+            # Name of the azure key vault
+            keyvault: ${{env.DevKeyVaultName}}
+            # Name of the secret to be fetched
+            secrets: ${{env.GlobalPassowrdSecret}}
+        
         - name: Azure App Service Settings
           uses: Azure/appservice-settings@v1
           with:
