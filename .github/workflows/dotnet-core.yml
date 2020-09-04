@@ -240,7 +240,7 @@ jobs:
             resourceLocation=australiaeast
             tenantGuid=${{secrets.TENANT_ID}}
             appServicePlanName=ProdAzureSprintPlan
-            keyVaultName= ${{env.ProdKeyVaultName}} 
+            keyVaultName=${{env.ProdKeyVaultName}} 
             webAppName=${{env.ProdWebAppName}}
             resourceGroupServicePrincipalManagedApplicationObjectId=${{secrets.PROD_APPSERVICE_OBJECTID}}
           # Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'.
