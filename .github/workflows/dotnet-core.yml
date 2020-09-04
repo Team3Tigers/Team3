@@ -206,7 +206,7 @@ jobs:
 
   deployProdARM:
     needs: [release1,release2,release3]
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2.0.5
