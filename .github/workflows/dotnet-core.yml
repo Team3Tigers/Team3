@@ -8,7 +8,8 @@ on:
 
 env:
   GlobalPassowrdSecret: GlobalPassword
-  DevKeyVaultName: Team3KeyVault 
+  DevKeyVaultName: Team3KeyVault
+  ProductionResourceGroupName: GitHubDevOps-2020-09-03-team-03-prod
 jobs:
    
   build:
@@ -66,6 +67,15 @@ jobs:
         name: drop
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ github.workspace }}/webportal
+        # The desired behavior if no files are found using the provided path.
+        if-no-files-found: error
+    - name: Upload a ARM Template
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        # Artifact name
+        name: drop
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ github.workspace }}/Deploy.json
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
   
@@ -194,3 +204,36 @@ jobs:
             # General configuration settings using dictionary syntax - Key Value pairs
             # general-settings-json: # optional
 
+  deployProdARM:
+    needs: [release1,release2,release3]
+    runs-on: windows-latest
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.0.5
+        with:
+        # Artifact name
+          name: drop
+      #- name: Azure Login
+      #  uses: Azure/login@v1
+      #  with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+      #    creds: ${{secrets.PRODAZURECREDENTIALSJONO}}
+      - name: Azure Resource Manager (ARM) Template Deployment
+        # You may pin to the exact commit or the version.
+        # uses: whiteducksoftware/azure-arm-action@93cecbb4200bb6171789ebd3566cda22ecd381f4
+        uses: whiteducksoftware/azure-arm-action@v3.2
+        with:
+          # Paste output of `az ad sp create-for-rbac -o json` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{secrets.PRODAZURECREDENTIALSJONO}}
+          # Provide the name of a resource group.
+          resourceGroupName: ${{env.ProductionResourceGroupName}}
+          # Specify the path to the Azure Resource Manager template.
+          templateLocation: ./Deploy.json
+          # Specifies the name of the resource group deployment to create.
+          deploymentName: ARMDeployment
+          # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group).
+          deploymentMode: Incremental
+          # Specify either path to the Azure Resource Manager parameters file or pass them as 'key1=value1;key2=value2;...'.
+          #parameters: # optional
+          # Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'.
+          #overrideParameters: # optional
