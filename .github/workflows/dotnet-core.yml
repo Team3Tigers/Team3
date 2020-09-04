@@ -245,3 +245,83 @@ jobs:
             resourceGroupServicePrincipalManagedApplicationObjectId=${{secrets.PROD_APPSERVICE_OBJECTID}}
           # Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'.
           #overrideParameters: # optional
+
+  releaseToProd:  
+      runs-on: windows-latest
+      needs: build
+      env: 
+        SimulatedFailureChance: 0
+      steps:
+        - name: Download a Build Artifact
+          uses: actions/download-artifact@v2.0.5
+          with:
+          # Artifact name
+            name: drop
+            
+        - name: Azure Login
+          uses: Azure/login@v1
+          with:
+            # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+            creds: ${{secrets.PRODAZURECREDENTIALSJONO}}
+            # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
+        - name: Azure WebApp
+          uses: Azure/webapps-deploy@v2
+          with:
+            app-name: ${{env.ProdWebAppName}}
+            package: . # optional, default is .
+            
+        - name: Azure key vault - Get Secrets
+          uses: Azure/get-keyvault-secrets@v1
+          with:
+            # Name of the azure key vault
+            keyvault: ${{env.ProdKeyVaultName}}
+            # Name of the secret to be fetched
+            secrets: ${{env.GlobalPassowrdSecret}}
+        
+        - name: Azure App Service Settings
+          uses: Azure/appservice-settings@v1
+          with:
+            # Name of the Azure Web App
+            app-name: ${{env.ProdWebAppName}}
+            # Name of an existing slot other than the production slot. Default value is production
+            # slot-name: # optional
+            # Application settings using the JSON syntax set as value of secret variable: APP_SETTINGS
+            app-settings-json: |
+              [
+                {
+                  "name": "ANCM_ADDITIONAL_ERROR_PAGE_LINK",
+                  "value": "https://JonoApp.scm.azurewebsites.net/detectors?type=tools&name=eventviewer",
+                  "slotSetting": false
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "${{secrets.INSTRUMENTATIONKEYJONO}}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "InstrumentationKey=${{secrets.INSTRUMENTATIONKEYJONO}};IngestionEndpoint=https://australiaeast-0.in.applicationinsights.azure.com/",
+                  "slotSetting": false
+                },
+                {
+                  "name": "ApplicationInsightsAgent_EXTENSION_VERSION",
+                  "value": "~2",
+                  "slotSetting": false
+                },
+                {
+                  "name": "GlobalPassword",
+                  "value": "${{env.GlobalPassword}}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "SimulatedFailureChance",
+                  "value": "${{env.SimulatedFailureChance}}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "XDT_MicrosoftApplicationInsights_Mode",
+                  "value": "default",
+                  "slotSetting": false
+                }
+              ]
+ 
