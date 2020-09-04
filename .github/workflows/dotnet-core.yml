@@ -9,6 +9,8 @@ on:
 env:
   GlobalPassowrdSecret: GlobalPassword
   DevKeyVaultName: Team3KeyVault
+  ProdKeyVaultName: ProdTeam3KeyVault
+  ProdWebAppName: ProdTeam3WebApp
   ProductionResourceGroupName: GitHubDevOps-2020-09-03-team-03-prod
 jobs:
    
@@ -234,6 +236,12 @@ jobs:
           # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group).
           deploymentMode: Incremental
           # Specify either path to the Azure Resource Manager parameters file or pass them as 'key1=value1;key2=value2;...'.
-          #parameters: # optional
+          parameters: |
+            resourceLocation=australiaeast
+            tenantGuid=${{secrets.TENANT_ID}}
+            appServicePlanName=ProdAzureSprintPlan
+            keyVaultName= ${{env.ProdKeyVaultName}} 
+            webAppName=${{env.ProdWebAppName}}
+            resourceGroupServicePrincipalManagedApplicationObjectId=${{secrets.PROD_APPSERVICE_OBJECTID}}
           # Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'.
           #overrideParameters: # optional
