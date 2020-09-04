@@ -53,6 +53,9 @@ jobs:
 
     - name: Publish
       run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --output ./webportal --no-build --configuration Release
+  
+    - name: Publish
+      run: dotnet publish ${{ github.workspace }}/AnimalAdoption.Web.Portal.FunctionalTests/AnimalAdoption.Web.Portal.FunctionalTests.csproj --output ./functionaltest --no-build --configuration Release
 
     - name: List out directory contents
       run: |
@@ -71,6 +74,17 @@ jobs:
         path: ${{ github.workspace }}/webportal
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.1.4
+      with:
+        # Artifact name
+        name: functionaltest
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ github.workspace }}/functionaltest
+        # The desired behavior if no files are found using the provided path.
+        if-no-files-found: error
+
     - name: Upload a ARM Template
       uses: actions/upload-artifact@v2.1.4
       with:
