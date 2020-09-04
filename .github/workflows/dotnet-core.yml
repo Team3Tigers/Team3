@@ -262,7 +262,7 @@ jobs:
 
   releaseToProd:  
       runs-on: windows-latest
-      needs: build
+      needs: deployProdARM
       env: 
         SimulatedFailureChance: 0
       steps:
