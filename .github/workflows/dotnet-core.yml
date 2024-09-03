@@ -100,7 +100,7 @@ jobs:
       needs: build
       steps:
         - name: Download a Build Artifact
-          uses: actions/download-artifact@v2.0.5
+          uses: actions/download-artifact@v4.1.7
           with:
           # Artifact name
             name: drop
@@ -121,7 +121,7 @@ jobs:
       needs: build
       steps:
         - name: Download a Build Artifact
-          uses: actions/download-artifact@v2.0.5
+          uses: actions/download-artifact@v4.1.7
           with:
           # Artifact name
             name: drop
@@ -143,7 +143,7 @@ jobs:
         SimulatedFailureChance: 0
       steps:
         - name: Download a Build Artifact
-          uses: actions/download-artifact@v2.0.5
+          uses: actions/download-artifact@v4.1.7
           with:
           # Artifact name
             name: drop
@@ -227,7 +227,7 @@ jobs:
       ANIMAL_ADOPTION_FUNCTIONAL_TEST_PATH: https://jonoapp.azurewebsites.net
     steps:
       - name: Download the function-tests build artifact
-        uses: actions/download-artifact@v2.0.5
+        uses: actions/download-artifact@v4.1.7
         with:
           name: functionaltest
           path: .
@@ -241,7 +241,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.0.5
+        uses: actions/download-artifact@v4.1.7
         with:
         # Artifact name
           name: drop
@@ -283,7 +283,7 @@ jobs:
         SimulatedFailureChance: 0
       steps:
         - name: Download a Build Artifact
-          uses: actions/download-artifact@v2.0.5
+          uses: actions/download-artifact@v4.1.7
           with:
           # Artifact name
             name: drop
